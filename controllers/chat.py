@@ -1,38 +1,22 @@
 from fastapi import HTTPException, status, Request
+from typing import Any
+from app import QUERY, db_chain
 
-from models.chat import Query
-
-from langchain.document_loaders.recursive_url_loader import RecursiveUrlLoader
-from langchain.indexes import VectorstoreIndexCreator
-
-def query_document_controller(request: Request, query: Query):
+def query_database_controller(request: Request, prompt: str, chat_history: str) -> str:
     """
-    Controller function to query a document based on the provided query.
-
+    Query the database using the provided prompt and chat history.
+    
     Parameters:
-        request (Request): The FastAPI Request object.
-        query (Query): An instance of the Query model representing the search query.
-
+    - request (Request): FastAPI request object.
+    - prompt (str): The query prompt.
+    - chat_history (str): The chat history.
+    
     Returns:
-        dict: The response containing the results of the query.
-
-    Raises:
-        HTTPException: If there are any errors during the query or document loading process.
+    - str: The response from the database query.
     """
     try:
-        # Create a RecursiveUrlLoader to load the document from the specified URL
-        loader = RecursiveUrlLoader(url=query.url)
-        # docs = loader.load()
-        # print("len of docs:",len(docs))
-        # Create an index using VectorstoreIndexCreator and load the document using the loader
-        index = VectorstoreIndexCreator().from_loaders([loader])
-        
-        # Perform question-answering using the index and the provided query string
-        response = index.query(query.query)
-        
+        question = QUERY.format(question=prompt, chat_history=chat_history)
+        response = db_chain.run(question)
         return response
-    
     except Exception as e:
-        # If any errors occur during the process, raise an HTTPException with a 500 status code
-        print(e)
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred during the query process.") from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

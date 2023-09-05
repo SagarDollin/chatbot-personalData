@@ -1,32 +1,50 @@
 from fastapi import FastAPI
 from dotenv import dotenv_values
 import os
+import environ
 
-# Load environment variables from the .env file
-config = dotenv_values(".env")
+from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 
-# Create a FastAPI application
+# Initialize environment variables and FastAPI application
+env = environ.Env()
+environ.Env.read_env()
+
+API_KEY = env('OPENAI_API_KEY')
+
+# Setup database
+db = SQLDatabase.from_uri(
+    f"postgresql+psycopg2://postgres:{env('DBPASS')}@localhost:5432/{env('DATABASE')}",
+)
+
+# setup llm
+llm = OpenAI(temperature=0, openai_api_key=API_KEY)
+QUERY = """
+Given an input question and the previous chat_history, first create a syntactically correct postgresql query to run, then look at the results of the query and return the answer.
+If the user asks when only then convert them to date IST and EST while displaying the answer (Not display anything about date until asked). Answer each query precisely by creating accurate postgresql
+The database belongs to the user asking the question, answer each question as an assitant of the user. Use the following format:
+
+Question: Question here
+SQLQuery: SQL Query to run
+SQLResult: Result of the SQLQuery
+Answer: Final answer here
+
+chat_history = {chat_history}
+question = {question}
+"""
+
+# Setup the database chain
+db_chain = SQLDatabaseChain(llm=llm, database=db, verbose=True)
+
+
+
 app = FastAPI()
 
-# Set environment variables during application startup
 @app.on_event("startup")
-def startup():
-    """
-    Function executed during application startup.
-
-    This function sets environment variables, specifically the 'OPENAI_API_KEY',
-    by loading their values from the .env file.
-    """
-    os.environ["OPENAI_API_KEY"] = config["OPENAI_API_KEY"]
+async def startup() -> None:
+    """Set up environment variables at startup."""
     print("OpenAPI key has been set, the server has been started!")
 
-# Perform cleanup during application shutdown
 @app.on_event("shutdown")
-def shutdown():
-    """
-    Function executed during application shutdown.
-
-    This function is called when the FastAPI application is shutting down.
-    It can be used to perform cleanup tasks or notify other services about the shutdown.
-    """
+async def shutdown() -> None:
+    """Perform clean-up during application shutdown."""
     print("Shutting down the server")

@@ -8,3 +8,6 @@ tiktoken==0.4.0
 httpx==0.24.1
 openai
 chromadb
+python-environ
+psycopg2
+streamlit

@@ -1,17 +1,24 @@
-# create_env_file.py
-import sys
+import argparse
+import os
 
-def create_env_file(api_key):
-    env_content = f"OPENAI_API_KEY={api_key}\nserver_on_message=\"Welcome to the ChatBot server developed by Sagar Dollin. Refer to readme.md file on how to access the chat app using POSTMAN\""
+def create_env_file(api_key, server_message, db_pass, database):
+    with open('.env', 'w') as f:
+        f.write(f"OPENAI_API_KEY={api_key}\n")
+        f.write(f'server_on_message="{server_message}"\n')
+        f.write(f"DBPASS={db_pass}\n")
+        f.write(f"DATABASE={database}\n")
 
-    with open(".env", "w") as env_file:
-        env_file.write(env_content)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Create a .env file for the project.')
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python create_env_file.py <OPENAI_API_KEY>")
-        sys.exit(1)
+    # Set default values as specified
+    parser.add_argument('--api_key', help='OpenAI API key')
+    parser.add_argument('--server_message', default='Welcome to the ChatBot server developed by Sagar Dollin. Refer to readme.md file on how to access the chat app using POSTMAN', help='Server on message text')
+    parser.add_argument('--db_pass', help='Database password')
+    parser.add_argument('--database', help='Database name')
 
-    input_api_key = sys.argv[1]
-    create_env_file(input_api_key)
-    print(".env file created successfully.")
+    args = parser.parse_args()
+
+    create_env_file(args.api_key, args.server_message, args.db_pass, args.database)
+
+    print("Successfully created .env file.")

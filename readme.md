@@ -1,100 +1,78 @@
-**README**
+# ChatBot Server & Frontend Application
 
-# ChatBot: OpenAI, langchain, FastAPI Document Query API
+This repository contains a ChatBot server developed using FastAPI which interacts with a PostgreSQL database to process user queries. There's also a frontend application designed using Streamlit that serves as an example UI for the ChatBot server.
 
-**Project Overview:**
+## Prerequisites:
 
-Document Query API is a web application that provides an API for querying a document using natural language queries. It includes endpoints for querying a document and a root endpoint to display a server message. The project utilizes environment variables loaded from a `.env` file to store configuration settings like the OpenAI API key.
+- Python 3.x
+- PostgreSQL (installed and running on localhost:5432 by default)
+- A `.env` file with required environment variables. You can generate one using `create_env_file.py`.
 
-**Key Features:**
+## Setting Up Backend:
 
-- **Querying a Document:** The API allows users to submit natural language queries along with a document URL. The system processes the query and returns relevant information from the document in response.
-
-- **Environment Variables:** The project utilizes environment variables to store sensitive information like the OpenAI API key. The environment variables are loaded from a `.env` file to keep the configuration secure.
-
-- **Recursive Document Loading:** The project employs the **Langchain Recursive Loader** to load the document URL recursively. This means that the system can efficiently process and handle complex, nested documents by following links and fetching nested content.
-
-**Requirements:**
-
-- Python 3.8 or higher
-- FastAPI
-- Uvicorn
-- Pydantic
-- Dotenv
-- OpenAI
-- Langchain
-
-**Installation:**
-
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
-
-2. Create a virtual environment (optional but recommended):
-   ```
-   python -m venv venv
-   source venv/bin/activate   # On Windows, use 'venv\Scripts\activate'
-   ```
-
-3. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-
-**Configuration:**
-
-1. Run the following command to create the .env file:
-
-   ```bash
-   python create_env_file.py YOUR_OPENAI_API_KEY
-   ```
-   Your .env file will look like this
-   ```
-   OPENAI_API_KEY=YOUR_OPENAI_API_KEY
-   server_on_message=Hello, this is the FastAPI server for document querying!
-   ```
-
-**Run `test.py` File:**
-
-You can run the tests using the `unittest` test runner. You can run the test.py file without starting the server.
-1. Run the `test.py` file using the `python` command:
-   ```
-   python test.py
-   ```
-
-The test script will execute the defined test cases and show the test results.
-
-**Starting the Server:**
-
-To start the server, use the following command in the project's root directory:
+### Step 1: Clone the Repository
+```bash
+git clone <repository_link>
+cd <repository_directory>
 ```
+
+### Step 2: Install Dependencies
+```bash
+pip install fastapi uvicorn psycopg2 python-dotenv openai streamlit
+```
+
+### Step 3: Create the .env File
+Use the provided script to create a `.env` file with necessary configurations:
+
+```bash
+python create_env_file.py --api_key YOUR_OPENAI_API_KEY --db_pass YOUR_DB_PASSWORD --database YOUR_DB_NAME
+```
+
+**Note:** Replace placeholders like `YOUR_OPENAI_API_KEY` with actual values.
+
+### Step 4: Start the Backend Server
+```bash
 python server.py
 ```
+You should see a message: `OpenAPI key has been set, the server has been started!`
 
-The server will run on `http://127.0.0.1:8001`.
+Your backend server is now running on `http://127.0.0.1:8001/`.
 
-**Accessing `/chat/query_document` Endpoint:**
+## Using Postman with Backend:
 
-To access the `/chat/query_document` endpoint and query a document, you can use POSTMAN or any other API client.
+### 1. Get Root:
+Send a GET request to `http://127.0.0.1:8001/` to get the server status.
 
-**Sample Request in POSTMAN:**
+### 2. Chat Query:
+To chat with the bot, send a POST request to `http://127.0.0.1:8001/chatDB/query_database` with the following body:
 
-- **Endpoint:** POST `http://127.0.0.1:8001/chat/query_document`
-- **Headers:** Set `Content-Type` to `application/json`
-- **Body:**
-  ```
-  {
-    "query": "Who is the author of this repository?",
-    "url": "https://github.com/SagarDollin/QuantumComputerSimulator"
-  }
-  ```
+```json
+{
+  "prompt": "YOUR_PROMPT_HERE",
+  "chat_history": "YOUR_CHAT_HISTORY_HERE"
+}
+```
 
-The above POST request queries the document located at `https://github.com/SagarDollin/QuantumComputerSimulator` with the question "Who is the author of this repository?" The server will process the request and return the response with the relevant information.
+Replace `YOUR_PROMPT_HERE` and `YOUR_CHAT_HISTORY_HERE` with your desired values.
 
-![This is a snip of reference output](images/image.png)
+### 3. Get Conversation Name:
+To get a name for a conversation based on a user query, send a POST request to `http://127.0.0.1:8001/conversation/get_name` with the body containing your query as a string.
 
-Feel free to modify the query and URL in the request to test different document queries using the provided API.
+## Running Frontend Application:
 
+After setting up and running the backend server, you can run the Streamlit frontend as an example UI.
 
+### Step 1: Start the Frontend Application:
+
+```bash
+cd frontend
+streamlit run frontendApp.py
+```
+
+You'll see a new browser window/tab opening with the ChatBot UI. Here, you can input messages and interact with the ChatBot, view previous chats, and more.
+
+## Conclusion:
+
+This README provides steps to set up both the backend server and frontend application. Make sure the backend server is running when you're interacting with the frontend application. The server handles chat queries and also suggests conversation names based on user queries. The frontend serves as an example of how you can integrate and interact with the backend.
+
+Developed by Sagar Dollin.
