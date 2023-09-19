@@ -18,6 +18,7 @@ Before you proceed with the backend and frontend setup, make sure you have a Pos
    CREATE DATABASE YOUR_DB_NAME;
    ```
 
+
 ## Setting Up Backend:
 
 ### Step 1: Clone the Repository
@@ -48,6 +49,8 @@ python create_env_file.py --api_key YOUR_OPENAI_API_KEY --db_pass YOUR_DB_PASSWO
 **Note:** Replace placeholders like `YOUR_OPENAI_API_KEY` with actual values.
 
 ### Step 5: Populate the Database
+
+Download your chrome browserhistory.json file and save it in the Chrome folder at the root level.
 
 Run `db.py` to populate the PostgreSQL database with a table called `browserhistory`.
 
