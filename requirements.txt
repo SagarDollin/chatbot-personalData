@@ -11,3 +11,4 @@ chromadb
 python-environ
 psycopg2
 streamlit
+pytest

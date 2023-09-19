@@ -17,7 +17,7 @@ def get_conversation_name_controller(query: str) -> str:
     try:
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"You are an assistant whose job is to suggest names for the queries asked by the user. Suggest a very small and meaningful name for the following query given by the user: Query={query}, name=?",
+            prompt=f"You are an assistant whose job is to suggest names for the queries asked by the user. Respond with a very small and meaningful name for the following query given by the user: {query}.",
             max_tokens=20
         )
         return response.choices[0].text.strip()
