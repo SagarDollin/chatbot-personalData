@@ -23,8 +23,8 @@ Before you proceed with the backend and frontend setup, make sure you have a Pos
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository_link>
-cd <repository_directory>
+git clone https://github.com/SagarDollin/chatbot-personalData.git
+cd chatbot-personalData
 ```
 
 ### Step 2: Create a Virtual Environment (Optional but Recommended)
